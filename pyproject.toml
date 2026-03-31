@@ -5,8 +5,15 @@ build-backend = "hatchling.build"
 [project]
 name = "lizard-delta"
 version = "0.2.0"
+description = "Delta-aware cyclomatic complexity reporting for GitLab Code Quality"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Alan Fischer" }]
 requires-python = ">=3.8"
-dependencies = []
+dependencies = ["lizard"]
+
+[project.urls]
+Repository = "https://github.com/alanfischer/lizard-delta"
 
 [project.scripts]
 lizard-base = "lizard_delta.lizard_base:main"

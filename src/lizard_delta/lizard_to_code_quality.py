@@ -7,8 +7,7 @@ gl-code-quality-report.json. GitLab reads that file as a Code Quality
 report, annotating MR diffs with functions whose cyclomatic complexity
 exceeds the threshold.
 
-Thresholds are controlled by CLI args (default: CCN_MINOR=30, CCN_MAJOR=60).
-In CI, native.sh passes these from the CCN_MINOR/CCN_MAJOR environment variables.
+Thresholds are controlled by CLI args (default: --ccn-minor=30, --ccn-major=60).
 
 With --base-csv (produced by lizard-base): for changed files, delta
 reporting applies the following rules:
