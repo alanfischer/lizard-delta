@@ -1,0 +1,16 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sram-code-quality"
+version = "0.1.0"
+requires-python = ">=3.8"
+dependencies = []
+
+[project.scripts]
+lizard-base = "sram_code_quality.lizard_base:main"
+lizard-to-code-quality = "sram_code_quality.lizard_to_code_quality:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sram_code_quality"]
