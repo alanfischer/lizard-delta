@@ -39,8 +39,12 @@ def load_csv(csv_path):
     """Load lizard CSV.
 
     Returns (functions, files) where:
-      functions: {(file_path, function_name): (ccn, start_line)}
+      functions: {(file_path, long_name): (ccn, start_line, function_name)}
       files:     set of file paths present in the CSV
+
+    long_name (row[8]) includes the full parameter signature, so overloaded
+    methods within the same file get distinct keys (e.g. two Swift methods
+    both named "tableView" but with different parameters).
     """
     functions = {}
     files = set()
@@ -55,8 +59,9 @@ def load_csv(csv_path):
                     ccn = int(float(row[1]))
                     file_path = row[6].strip()
                     function_name = row[7].strip()
+                    long_name = row[8].strip()
                     start_line = int(row[9])
-                    functions[(file_path, function_name)] = (ccn, start_line)
+                    functions[(file_path, long_name)] = (ccn, start_line, function_name)
                     files.add(file_path)
                 except (ValueError, IndexError):
                     continue
@@ -86,10 +91,10 @@ def convert(csv_path, json_path, base_csv_path=None, ccn_minor=30, ccn_major=60)
     threshold_count = 0
     worsened_count = 0
 
-    for (file_path, function_name), (ccn, start_line) in current_funcs.items():
+    for (file_path, long_name), (ccn, start_line, function_name) in current_funcs.items():
         if file_path in base_files:
             # File was changed in this MR — apply delta rules.
-            base_entry = base_funcs.get((file_path, function_name))
+            base_entry = base_funcs.get((file_path, long_name))
             base_ccn = base_entry[0] if base_entry else None
 
             if ccn > ccn_minor:
@@ -99,7 +104,7 @@ def convert(csv_path, json_path, base_csv_path=None, ccn_minor=30, ccn_major=60)
                     issues.append(make_issue(
                         f"Function '{function_name}' has cyclomatic complexity"
                         f" of {ccn} (threshold: {ccn_minor})",
-                        fingerprint(file_path, function_name),
+                        fingerprint(file_path, long_name),
                         ccn, ccn_major, file_path, start_line,
                     ))
                     threshold_count += 1
@@ -109,7 +114,7 @@ def convert(csv_path, json_path, base_csv_path=None, ccn_minor=30, ccn_major=60)
                     issues.append(make_issue(
                         f"Function '{function_name}' has cyclomatic complexity"
                         f" of {ccn} (threshold: {ccn_minor})",
-                        fingerprint(file_path, function_name),
+                        fingerprint(file_path, long_name),
                         ccn, ccn_major, file_path, start_line,
                     ))
                     threshold_count += 1
@@ -120,7 +125,7 @@ def convert(csv_path, json_path, base_csv_path=None, ccn_minor=30, ccn_major=60)
                         issues.append(make_issue(
                             f"Function '{function_name}' complexity increased"
                             f" by {delta} ({base_ccn} \u2192 {ccn})",
-                            fingerprint(file_path, function_name, ":worsened"),
+                            fingerprint(file_path, long_name, ":worsened"),
                             ccn, ccn_major, file_path, start_line,
                         ))
                         worsened_count += 1
@@ -138,7 +143,7 @@ def convert(csv_path, json_path, base_csv_path=None, ccn_minor=30, ccn_major=60)
                 issues.append(make_issue(
                     f"Function '{function_name}' has cyclomatic complexity"
                     f" of {ccn} (threshold: {ccn_minor})",
-                    fingerprint(file_path, function_name),
+                    fingerprint(file_path, long_name),
                     ccn, ccn_major, file_path, start_line,
                 ))
                 threshold_count += 1
