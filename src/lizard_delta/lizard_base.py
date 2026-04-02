@@ -18,6 +18,13 @@ def get_merge_base(target_branch):
         r = subprocess.run(["git", "merge-base", "HEAD", ref], capture_output=True, text=True)
         if r.returncode == 0 and r.stdout.strip():
             return r.stdout.strip()
+    # The ref may not have been fetched (e.g. CI runners often only fetch the
+    # source branch).  Try fetching it before falling back to HEAD~1.
+    subprocess.run(["git", "fetch", "origin", target_branch], capture_output=True)
+    for ref in [f"origin/{target_branch}", target_branch]:
+        r = subprocess.run(["git", "merge-base", "HEAD", ref], capture_output=True, text=True)
+        if r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip()
     r = subprocess.run(["git", "rev-parse", "HEAD~1"], capture_output=True, text=True)
     return r.stdout.strip() if r.returncode == 0 else None
 
