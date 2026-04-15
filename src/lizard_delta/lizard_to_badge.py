@@ -192,12 +192,15 @@ def main():
     violations = load_violations(args.csv_path, args.ccn_minor, args.ccn_major)
     count = len(violations)
 
+    has_major = any(v["severity"] == "major" for v in violations)
+    label_value = f"{count} violation{'s' if count != 1 else ''}"
+
     if count == 0:
         color, value = "#4c1", "0 violations"
-    elif count <= 5:
-        color, value = "#fe7d37", f"{count} violation{'s' if count != 1 else ''}"
+    elif has_major:
+        color, value = "#e05d44", label_value  # red — at least one major
     else:
-        color, value = "#e05d44", f"{count} violations"
+        color, value = "#dfb317", label_value  # yellow — minor only
 
     with open(args.badge_path, "w") as f:
         f.write(_badge_svg("complexity", value, color))

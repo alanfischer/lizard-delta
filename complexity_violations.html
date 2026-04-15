@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Complexity Violations</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 2rem; color: #24292e; background: #fff;
+    }
+    h1 { font-size: 1.4rem; margin-bottom: .25rem; }
+    .summary { color: #586069; margin: 0 0 1.5rem; }
+    table { border-collapse: collapse; width: 100%; font-size: .875rem; }
+    th {
+      background: #f6f8fa; border: 1px solid #e1e4e8;
+      padding: 6px 12px; text-align: left; white-space: nowrap;
+    }
+    td { border: 1px solid #e1e4e8; padding: 6px 12px; }
+    tr:hover td { background: #f6f8fa; }
+    .num { text-align: center; font-variant-numeric: tabular-nums; }
+    .sev { text-align: center; font-weight: 600; }
+    .major { color: #d73a49; }
+    .minor { color: #e36209; }
+    .none { color: #28a745; font-weight: 600; }
+    td:nth-child(2) { font-family: "SFMono-Regular", Consolas, monospace; font-size: .8rem; }
+    td:nth-child(1) { font-family: "SFMono-Regular", Consolas, monospace; font-size: .8rem; }
+  </style>
+</head>
+<body>
+  <h1>Complexity Violations</h1>
+  <p class="summary">15 functions exceed CCN threshold of 30 (minor &gt; 30, major &gt; 999)</p>
+  <table>
+  <thead><tr><th>Function</th><th>File</th><th>CCN</th><th>Line</th><th>Severity</th></tr></thead>
+  <tbody>
+    <tr><td>qbabel::translate::csv2datapoints</td><td>src/qbabel/translate/DataPointsToCsv.cpp</td><td class='num'>80</td><td class='num'>220</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::ant::MsgToDataPoints::operator ( )</td><td>src/qbabel/ant/MsgToDataPoints.cpp</td><td class='num'>67</td><td class='num'>24</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::translate::AntBleToFitDataPoints::operator ( )</td><td>src/qbabel/translate/AntBleToFitDataPoints.cpp</td><td class='num'>66</td><td class='num'>50</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::translate::datapoints2sql</td><td>src/qbabel/translate/DataPointsToSql.cpp</td><td class='num'>63</td><td class='num'>56</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::translate::json2datapoints</td><td>src/qbabel/translate/DataPointsToJson.cpp</td><td class='num'>57</td><td class='num'>193</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::fuze::Fuze::encodeMessage</td><td>src/qbabel/fuze/Fuze.cpp</td><td class='num'>55</td><td class='num'>329</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::translate::datapoints2csv</td><td>src/qbabel/translate/DataPointsToCsv.cpp</td><td class='num'>54</td><td class='num'>28</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::fuze::Fuze::generateSession</td><td>src/qbabel/fuze/Fuze.cpp</td><td class='num'>49</td><td class='num'>1035</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::translate::datapoints2json</td><td>src/qbabel/translate/DataPointsToJson.cpp</td><td class='num'>43</td><td class='num'>33</td><td class='sev minor'>minor</td></tr>
+    <tr><td>sram::device::SramDeviceImpl::continue_add_services</td><td>src/device/sram_device_impl.cpp</td><td class='num'>42</td><td class='num'>404</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::translate::AntBleToFitDataPoints::bleDataPointsToFitRecord</td><td>src/qbabel/translate/AntBleToFitDataPoints.cpp</td><td class='num'>35</td><td class='num'>515</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::filter::Marksample::resample</td><td>src/qbabel/filter/Marksample.cpp</td><td class='num'>34</td><td class='num'>202</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::translate::AntBleToFitDataPoints::antDataPointsToFitRecord</td><td>src/qbabel/translate/AntBleToFitDataPoints.cpp</td><td class='num'>33</td><td class='num'>329</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::translate::bin2devices</td><td>src/qbabel/translate/DevicesToBinary.cpp</td><td class='num'>32</td><td class='num'>216</td><td class='sev minor'>minor</td></tr>
+    <tr><td>qbabel::filter::Resample::zeroOrderUnique</td><td>src/qbabel/filter/Resample.cpp</td><td class='num'>31</td><td class='num'>52</td><td class='sev minor'>minor</td></tr>
+  </tbody>
+</table>
+</body>
+</html>
