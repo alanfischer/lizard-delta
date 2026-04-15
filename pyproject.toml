@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lizard-delta"
-version = "0.2.1"
+version = "0.3.0"
 description = "Delta-aware cyclomatic complexity reporting for GitLab Code Quality"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -18,6 +18,7 @@ Repository = "https://github.com/alanfischer/lizard-delta"
 [project.scripts]
 lizard-base = "lizard_delta.lizard_base:main"
 lizard-to-code-quality = "lizard_delta.lizard_to_code_quality:main"
+lizard-to-badge = "lizard_delta.lizard_to_badge:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/lizard_delta"]
