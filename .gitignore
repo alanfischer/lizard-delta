@@ -1,0 +1,9 @@
+venv/
+*.egg-info/
+__pycache__/
+*.pyc
+dist/
+build/
+complexity_badge.svg
+complexity_violations.html
+lizard_report.csv
