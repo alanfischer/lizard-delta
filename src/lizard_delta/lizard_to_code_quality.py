@@ -39,14 +39,21 @@ def load_csv(csv_path):
     """Load lizard CSV.
 
     Returns (functions, files) where:
-      functions: {(file_path, long_name): (ccn, start_line, function_name)}
+      functions: {(file_path, long_name, occurrence): (ccn, start_line, function_name)}
       files:     set of file paths present in the CSV
 
     long_name (row[8]) includes the full parameter signature, so overloaded
     methods within the same file get distinct keys (e.g. two Swift methods
     both named "tableView" but with different parameters).
+
+    long_name carries no class qualifier, so two classes in the same file
+    implementing the same signature (e.g. two Kotlin data classes each
+    overriding "equals other : Any?") still collide. occurrence is the
+    0-based index of the (file_path, long_name) pair in file order, keeping
+    such functions distinct instead of letting the last row win.
     """
     functions = {}
+    occurrences = {}
     files = set()
     try:
         with open(csv_path, newline="") as f:
@@ -61,7 +68,9 @@ def load_csv(csv_path):
                     function_name = row[7].strip()
                     long_name = row[8].strip()
                     start_line = int(row[9])
-                    functions[(file_path, long_name)] = (ccn, start_line, function_name)
+                    occurrence = occurrences.get((file_path, long_name), 0)
+                    occurrences[(file_path, long_name)] = occurrence + 1
+                    functions[(file_path, long_name, occurrence)] = (ccn, start_line, function_name)
                     files.add(file_path)
                 except (ValueError, IndexError):
                     continue
@@ -91,10 +100,15 @@ def convert(csv_path, json_path, base_csv_path=None, ccn_minor=30, ccn_major=60)
     threshold_count = 0
     worsened_count = 0
 
-    for (file_path, long_name), (ccn, start_line, function_name) in current_funcs.items():
+    for (file_path, long_name, occurrence), (ccn, start_line, function_name) in current_funcs.items():
+        # Occurrence 0 keeps the historical unsuffixed fingerprint so existing
+        # GitLab findings don't churn as resolved+new; only same-file
+        # same-signature duplicates get a distinguishing suffix.
+        occurrence_suffix = f"#{occurrence}" if occurrence else ""
+
         if file_path in base_files:
             # File was changed in this MR — apply delta rules.
-            base_entry = base_funcs.get((file_path, long_name))
+            base_entry = base_funcs.get((file_path, long_name, occurrence))
             base_ccn = base_entry[0] if base_entry else None
 
             if ccn > ccn_minor:
@@ -104,7 +118,7 @@ def convert(csv_path, json_path, base_csv_path=None, ccn_minor=30, ccn_major=60)
                     issues.append(make_issue(
                         f"Function '{function_name}' has cyclomatic complexity"
                         f" of {ccn} (threshold: {ccn_minor})",
-                        fingerprint(file_path, long_name),
+                        fingerprint(file_path, long_name, occurrence_suffix),
                         ccn, ccn_major, file_path, start_line,
                     ))
                     threshold_count += 1
@@ -114,7 +128,7 @@ def convert(csv_path, json_path, base_csv_path=None, ccn_minor=30, ccn_major=60)
                     issues.append(make_issue(
                         f"Function '{function_name}' has cyclomatic complexity"
                         f" of {ccn} (threshold: {ccn_minor})",
-                        fingerprint(file_path, long_name),
+                        fingerprint(file_path, long_name, occurrence_suffix),
                         ccn, ccn_major, file_path, start_line,
                     ))
                     threshold_count += 1
@@ -125,7 +139,7 @@ def convert(csv_path, json_path, base_csv_path=None, ccn_minor=30, ccn_major=60)
                         issues.append(make_issue(
                             f"Function '{function_name}' complexity increased"
                             f" by {delta} ({base_ccn} \u2192 {ccn})",
-                            fingerprint(file_path, long_name, ":worsened"),
+                            fingerprint(file_path, long_name, occurrence_suffix + ":worsened"),
                             ccn, ccn_major, file_path, start_line,
                         ))
                         worsened_count += 1
@@ -143,7 +157,7 @@ def convert(csv_path, json_path, base_csv_path=None, ccn_minor=30, ccn_major=60)
                 issues.append(make_issue(
                     f"Function '{function_name}' has cyclomatic complexity"
                     f" of {ccn} (threshold: {ccn_minor})",
-                    fingerprint(file_path, long_name),
+                    fingerprint(file_path, long_name, occurrence_suffix),
                     ccn, ccn_major, file_path, start_line,
                 ))
                 threshold_count += 1
